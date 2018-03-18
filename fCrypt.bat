@@ -1,4 +1,5 @@
 @echo off
+if not exist verify set creason=NX-VERIFY & goto crash
 echo Enter your password to access your files:
 set /p p=^>
 if "%1"=="-install" not exist Files set ensf=verify & call :ensf & mkdir Files
@@ -30,3 +31,40 @@ del %dcsf%
 copy dcsf.TMP %dcsf%
 del dcsf.TMP
 goto :EOF
+
+:crash
+if not defined creason set creason=NO-REASON-SPECIFIED
+echo.
+echo Sorry, but fCrypt has crashed.
+echo Reason specified:
+echo %creason%
+set cdumpfile=crash_%random%.txt
+echo --Crashdump generated on %date% at %time%-- >>%cdumpfile%
+echo. >>%cdumpfile%
+echo Reason specified: >>%cdumpfile%
+echo. >>%cdumpfile%
+echo %creason% >>%cdumpfile%
+echo. >>%cdumpfile%
+echo VARS: >>%cdumpfile%
+echo ENSF=%ensf% >>%cdumpfile%
+echo DCSF=%dcsf% >>%cdumpfile%
+echo ERRORLEVEL=%ERRORLEVEL% >>%cdumpfile%
+echo. >>%cdumpfile%
+echo DIR OUTPUT: >>%cdumpfile%
+dir >>%cdumpfile%
+echo. >>%cdumpfile%
+echo CURRENT DIRECTORY: >>%cdumpfile%
+echo %CD% >>%cdumpfile%
+echo. >>%cdumpfile%
+echo CURRENT SCRIPT NAME: >>%cdumpfile%
+echo %0 >>%cdumpfile%
+echo. >>%cdumpfile%
+echo OUTPUT OF TASKLIST: >>%cdumpfile%
+tasklist >>%cdumpfile%
+echo. >>%cdumpfile%
+echo. >>%cdumpfile%
+echo End of crashdump. >>%cdumpfile%
+echo Details of the crash were saved to
+echo %cdumpfile%
+pause
+exit /b
